@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Engagement Analytics Dashboard - Stylish Charts</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #1e1e2f;
+      color: #eee;
+      margin: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      color: #61dafb;
+    }
+    form {
+      max-width: 420px;
+      margin: 0 auto 40px;
+      background: #2c2c47;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.7);
+    }
+    label {
+      display: block;
+      margin-bottom: 14px;
+      font-weight: 600;
+      font-size: 1rem;
+      color: #a5a8c7;
+    }
+    input {
+      width: 100%;
+      padding: 8px 12px;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      background: #3a3a61;
+      color: #eee;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+      transition: background-color 0.3s;
+    }
+    input:focus {
+      background: #4e57a5;
+      box-shadow: 0 0 8px #61dafb;
+      color: #fff;
+    }
+    button {
+      margin-top: 18px;
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #61dafb, #1a9ed8);
+      border: none;
+      border-radius: 12px;
+      color: #1e1e2f;
+      font-weight: 700;
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 6px 10px rgba(97, 218, 251, 0.6);
+      transition: background 0.4s ease;
+    }
+    button:hover {
+      background: linear-gradient(135deg, #53c7ff, #1582cc);
+      box-shadow: 0 8px 16px rgba(53, 199, 255, 0.8);
+    }
+    .charts-container {
+      max-width: 960px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+    }
+    canvas {
+      background: #2c2c47;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.8);
+      width: 100% !important;
+      height: 420px !important;
+    }
+    .legend {
+      max-width: 420px;
+      margin: 24px auto;
+      font-family: sans-serif;
+      font-size: 0.9rem;
+      color: #eee;
+      text-align: center;
+      line-height: 1.6;
+    }
+    .legend span {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      margin-right: 8px;
+      vertical-align: middle;
+      border-radius: 4px;
+    }
+    .legend .at-risk { background: rgba(255, 99, 132, 0.85); }
+    .legend .improving { background: rgba(255, 159, 64, 0.85); }
+    .legend .high-achiever { background: rgba(75, 192, 192, 0.85); }
+    @media (max-width: 768px) {
+      .charts-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Engagement Analytics Dashboard</h1>
+
+  <form id="dataForm" autocomplete="off">
+    <label>
+      Attendance (%):
+      <input type="number" id="attendance" min="0" max="100" required />
+    </label>
+    <label>
+      Predicted Score (%):
+      <input type="number" id="predictedScore" min="0" max="100" required />
+    </label>
+    <label>
+      Study Hours:
+      <input type="number" id="studyHours" min="0" required />
+    </label>
+    <label>
+      Performance Score (%):
+      <input type="number" id="performanceScore" min="0" max="100" required />
+    </label>
+    <label>
+      Participation:
+      <input type="number" id="participation" min="0" required />
+    </label>
+    <button type="submit">Add Data</button>
+  </form>
+
+  <div class="charts-container">
+    <canvas id="attendanceChart"></canvas>
+    <canvas id="studyPerformanceChart"></canvas>
+  </div>
+
+  <div class="legend">
+    <div><span class="at-risk"></span> At Risk (Below 50)</div>
+    <div><span class="improving"></span> Improving (50 - 74)</div>
+    <div><span class="high-achiever"></span> High Achiever (75+)</div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Data storage
+    const attendanceData = [];
+    const studyPerformanceData = [];
+
+    // Category function returns label & color
+    function getCategory(score) {
+      if (score < 50) return { label: 'At Risk', color: 'rgba(255, 99, 132, 0.85)' };
+      else if (score < 75) return { label: 'Improving', color: 'rgba(255, 159, 64, 0.85)' };
+      else return { label: 'High Achiever', color: 'rgba(75, 192, 192, 0.85)' };
+    }
+
+    // Custom point styles array for variety
+    const pointStyles = ['circle', 'triangle', 'rectRounded', 'rectRot', 'cross', 'star'];
+
+    // Attendance vs Predicted Score chart
+    const attendanceCtx = document.getElementById('attendanceChart').getContext('2d');
+    const attendanceChart = new Chart(attendanceCtx, {
+      type: 'scatter',
+      data: {
+        datasets: [{
+          label: 'Attendance vs Predicted Score',
+          data: attendanceData,
+          backgroundColor: [],
+          borderColor: 'rgba(54, 162, 235, 0.9)',
+          pointStyle: [],
+          pointRadius: 8,
+          pointHoverRadius: 12,
+          borderWidth: 1.5,
+          hoverBorderWidth: 3,
+          showLine: false,
+          tension: 0.3,
+        }]
+      },
+      options: {
+        responsive: true,
+        animation: {
+          duration: 800,
+          easing: 'easeOutQuart'
+        },
+        scales: {
+          x: {
+            title: { display: true, text: 'Attendance (%)', color: '#a5a8c7', font: {size:14, weight:'600'} },
+            min: 0,
+            max: 100,
+            grid: { color: '#444a70' },
+            ticks: { color: '#bbb' }
+          },
+          y: {
+            title: { display: true, text: 'Predicted Score (%)', color: '#a5a8c7', font: {size:14, weight:'600'} },
+            min: 0,
+            max: 100,
+            grid: { color: '#444a70' },
+            ticks: { color: '#bbb' }
+          }
+        },
+        plugins: {
+          legend: {
+            labels: { color: '#61dafb', font: { size: 14, weight: 'bold' } }
+          },
+          tooltip: {
+            backgroundColor: '#22284d',
+            titleColor: '#61dafb',
+            bodyColor: '#eee',
+            borderColor: '#61dafb',
+            borderWidth: 1,
+            callbacks: {
+              label: ctx => `Attendance: ${ctx.raw.x}%, Predicted: ${ctx.raw.y}%`
+            }
+          }
+        }
+      }
+    });
+
+    // Study Hours vs Performance Score chart
+    const studyPerfCtx = document.getElementById('studyPerformanceChart').getContext('2d');
+    const studyPerformanceChart = new Chart(studyPerfCtx, {
+      type: 'scatter',
+      data: {
+        datasets: [{
+          label: 'Study Hours vs Performance Score',
+          data: studyPerformanceData,
+          backgroundColor: [],
+          borderColor: 'rgba(75, 192, 192, 0.9)',
+          pointStyle: [],
+          pointRadius: 10,
+          pointHoverRadius: 14,
+          borderWidth: 1.5,
+          hoverBorderWidth: 3,
+          showLine: false,
+          tension: 0.4,
+        }]
+      },
+      options: {
+        responsive: true,
+        animation: {
+          duration: 900,
+          easing: 'easeOutQuart'
+        },
+        scales: {
+          x: {
+            title: { display: true, text: 'Study Hours', color: '#a5a8c7', font: {size:14, weight:'600'} },
+            min: 0,
+            grid: { color: '#444a70' },
+            ticks: { color: '#bbb' }
+          },
+          y: {
+            title: { display: true, text: 'Performance Score (%)', color: '#a5a8c7', font: {size:14, weight:'600'} },
+            min: 0,
+            max: 100,
+            grid: { color: '#444a70' },
+            ticks: { color: '#bbb' }
+          }
+        },
+        plugins: {
+          legend: {
+            labels: { color: '#61dafb', font: { size: 14, weight: 'bold' } }
+          },
+          tooltip: {
+            backgroundColor: '#22284d',
+            titleColor: '#61dafb',
+            bodyColor: '#eee',
+            borderColor: '#61dafb',
+            borderWidth: 1,
+            callbacks: {
+              label: ctx => `Study Hours: ${ctx.raw.x}, Performance: ${ctx.raw.y}%`
+            }
+          }
+        }
+      }
+    });
+
+    // Add data and update charts on form submission
+    document.getElementById('dataForm').addEventListener('submit', event => {
+      event.preventDefault();
+
+      const attendance = parseFloat(document.getElementById('attendance').value);
+      const predictedScore = parseFloat(document.getElementById('predictedScore').value);
+      const studyHours = parseFloat(document.getElementById('studyHours').value);
+      const performanceScore = parseFloat(document.getElementById('performanceScore').value);
+
+      // Assign a random point style for attendance chart (for fun)
+      const randomPointStyle = pointStyles[Math.floor(Math.random() * pointStyles.length)];
+
+      // Add to attendance data
+      attendanceData.push({ x: attendance, y: predictedScore });
+      attendanceChart.data.datasets[0].data = attendanceData;
+      attendanceChart.data.datasets[0].backgroundColor = attendanceData.map(() => 'rgba(54, 162, 235, 0.85)');
+      attendanceChart.data.datasets[0].pointStyle = attendanceData.map(() => randomPointStyle);
+
+      attendanceChart.update();
+
+      // Add to study performance data with color coding & point style based on score
+      studyPerformanceData.push({ x: studyHours, y: performanceScore });
+      studyPerformanceChart.data.datasets[0].data = studyPerformanceData;
+      studyPerformanceChart.data.datasets[0].backgroundColor = studyPerformanceData.map(point => getCategory(point.y).color);
+      studyPerformanceChart.data.datasets[0].pointStyle = studyPerformanceData.map((point, idx) => pointStyles[idx % pointStyles.length]);
+
+      studyPerformanceChart.update();
+
+      event.target.reset();
+    });
+  </script>
+</body>
+</html>
