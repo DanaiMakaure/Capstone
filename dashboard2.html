@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Zazi - Know Yourself,Know Four Future</title>
+  <style>
+    :root {
+      --primary: #9370DB;
+      --primary-light: #B19CD9;
+      --primary-dark: #7B68EE;
+      --accent: #FF69B4;
+      --text: #333;
+      --light: #f8f9fa;
+      --dark: #343a40;
+      --success: #28a745;
+      --danger: #dc3545;
+      --warning: #ffc107;
+      --info: #17a2b8;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f5f5ff;
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* Navbar */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo-title {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .logo {
+      font-size: 2rem;
+      animation: pulse 2s infinite;
+    }
+
+    .navbar h1 {
+      font-weight: 600;
+      font-size: 1.5rem;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .nav-btn {
+      color: white;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .nav-btn:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .nav-btn i {
+      font-size: 1.2rem;
+    }
+
+    select#languageSelect {
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      border: none;
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+      cursor: pointer;
+      outline: none;
+    }
+
+    select#languageSelect option {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    button#logoutBtn {
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      border: 1px solid white;
+      background-color: transparent;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    button#logoutBtn:hover {
+      background-color: white;
+      color: var(--primary);
+    }
+
+    /* Dashboard Container */
+    .dashboard-container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+
+    /* Welcome Section */
+    .welcome-section {
+      background: linear-gradient(135deg, #fff, #f0e6ff);
+      padding: 2rem;
+      border-radius: 15px;
+      margin-bottom: 2rem;
+      box-shadow: 0 6px 20px rgba(147, 112, 219, 0.1);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .welcome {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--primary-dark);
+      margin-bottom: 0.5rem;
+      animation: fadeIn 1s ease;
+    }
+
+    .welcome-icon {
+      font-size: 2.5rem;
+      margin-right: 0.5rem;
+      vertical-align: middle;
+    }
+
+    .cute-message {
+      font-size: 1.2rem;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      animation: fadeIn 1.5s ease;
+    }
+
+    .safety-tips {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .safety-tip {
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 1rem;
+      border-radius: 10px;
+      max-width: 300px;
+      text-align: left;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-left: 4px solid var(--primary);
+      transition: transform 0.3s ease;
+    }
+
+    .safety-tip:hover {
+      transform: translateY(-5px);
+    }
+
+    .safety-tip h4 {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--primary-dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .safety-tip p {
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .action-btn {
+      padding: 1rem 1.5rem;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 1rem;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .action-btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .action-btn.emergency {
+      background-color: var(--danger);
+    }
+
+    .action-btn.support {
+      background-color: var(--info);
+    }
+
+    .action-btn.resources {
+      background-color: var(--success);
+    }
+
+    .action-btn i {
+      font-size: 1.5rem;
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 5% auto;
+      padding: 2rem;
+      border-radius: 10px;
+      max-width: 800px;
+      width: 90%;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      position: absolute;
+      right: 20px;
+      top: 10px;
+    }
+
+    .close:hover {
+      color: var(--danger);
+    }
+
+    /* Emergency Modal */
+    .emergency-contacts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .emergency-contact {
+      background-color: #f8f9fa;
+      padding: 1rem;
+      border-radius: 8px;
+      border-left: 4px solid var(--danger);
+    }
+
+    .emergency-contact h3 {
+      color: var(--danger);
+      margin-bottom: 0.5rem;
+    }
+
+    .emergency-contact p {
+      margin-bottom: 0.8rem;
+    }
+
+    .call-btn {
+      background-color: var(--danger);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .call-btn:hover {
+      background-color: #c82333;
+    }
+
+    .emergency-tips {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid #eee;
+    }
+
+    .emergency-tips h3 {
+      color: var(--danger);
+      margin-bottom: 0.8rem;
+    }
+
+    .emergency-tips ul {
+      padding-left: 1.5rem;
+    }
+
+    .emergency-tips li {
+      margin-bottom: 0.5rem;
+    }
+
+    /* Support Modal */
+    .support-categories {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .support-category {
+      background-color: #f8f9fa;
+      padding: 1rem;
+      border-radius: 8px;
+      border-left: 4px solid var(--info);
+    }
+
+    .support-category h3 {
+      color: var(--info);
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .support-category ul {
+      padding-left: 1.5rem;
+    }
+
+    .support-category li {
+      margin-bottom: 1rem;
+    }
+
+    .support-note {
+      font-style: italic;
+      color: #666;
+      margin-top: 1rem;
+    }
+
+    /* Resources Modal */
+    .resources-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin: 1rem 0;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 0.5rem;
+    }
+
+    .tab-btn {
+      padding: 0.5rem 1rem;
+      background-color: #f8f9fa;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .tab-btn.active {
+      background-color: var(--success);
+      color: white;
+    }
+
+    .tab-pane {
+      display: none;
+      padding: 1rem 0;
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    .resource-section {
+      margin-bottom: 1.5rem;
+    }
+
+    .resource-section h4 {
+      color: var(--success);
+      margin-bottom: 0.5rem;
+    }
+
+    .video-resources {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+
+    .video-resource {
+      background-color: #f8f9fa;
+      padding: 1rem;
+      border-radius: 8px;
+    }
+
+    .video-placeholder {
+      background-color: #ddd;
+      height: 150px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border-radius: 5px;
+      margin-bottom: 0.5rem;
+      color: #666;
+    }
+
+    .video-placeholder i {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .download-items {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .download-item {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      background-color: #f8f9fa;
+      padding: 1rem;
+      border-radius: 8px;
+    }
+
+    .download-item i {
+      font-size: 2rem;
+      color: var(--success);
+    }
+
+    .download-btn {
+      background-color: var(--success);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 0.5rem;
+    }
+
+    .download-btn:hover {
+      background-color: #218838;
+    }
+
+    /* Dashboard Tiles */
+    .tiles-section {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      color: var(--primary-dark);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .tiles {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .tile {
+      background-color: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      text-decoration: none;
+      color: var(--text);
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 1rem;
+      border: 1px solid #eee;
+    }
+
+    .tile:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 12px 20px rgba(147, 112, 219, 0.2);
+      border-color: var(--primary-light);
+    }
+
+    .tile-icon {
+      font-size: 2.5rem;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .tile h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--primary-dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .tile p {
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    /* User Support Box */
+    .support-box {
+      background: linear-gradient(135deg, var(--primary-light), var(--primary));
+      color: white;
+      padding: 1.5rem;
+      border-radius: 15px;
+      margin-top: 2rem;
+      box-shadow: 0 6px 20px rgba(147, 112, 219, 0.2);
+      text-align: center;
+    }
+
+    .support-box h3 {
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .support-box p {
+      margin-bottom: 1rem;
+    }
+
+    .helpline {
+      background-color: rgba(255, 255, 255, 0.2);
+      padding: 0.8rem;
+      border-radius: 10px;
+      margin-top: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .helpline-btn {
+      background-color: white;
+      color: var(--primary-dark);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .helpline-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Progress Tracker */
+    .progress-tracker {
+      background-color: white;
+      padding: 1.5rem;
+      border-radius: 15px;
+      margin-top: 2rem;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .progress-title {
+      font-size: 1.3rem;
+      color: var(--primary-dark);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .progress-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: space-between;
+    }
+
+    .progress-item {
+      flex: 1;
+      min-width: 200px;
+      background-color: #f9f9f9;
+      padding: 1rem;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .progress-bar {
+      height: 10px;
+      background-color: #e0e0e0;
+      border-radius: 5px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 5px;
+      transition: width 0.5s ease;
+    }
+
+     /* Footer Styling */
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 3rem 0 1rem;
+            margin-top: 3rem;
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .social-link {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        
+        .social-link:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+        
+        .footer-section h4 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .footer-links, .contact-info {
+            list-style: none;
+        }
+        
+        .footer-links li, .contact-info li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-links a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .contact-info i {
+            margin-right: 0.5rem;
+            color: #8a2be2;
+        }
+        
+        .newsletter-form {
+            display: flex;
+            margin-top: 1rem;
+        }
+        
+        .newsletter-form input {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 5px 0 0 5px;
+        }
+        
+        .newsletter-form button {
+            padding: 0.75rem 1rem;
+            background-color: #6a0dad;
+            color: white;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .newsletter-form button:hover {
+            background-color: #8a2be2;
+        }
+        
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .footer-bottom-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .footer-bottom-links a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-bottom-links a:hover {
+            color: white;
+        }
+
+    /* Animations */
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.1);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Alert Animation */
+    @keyframes shake {
+      0%, 100% {transform: translateX(0);}
+      20%, 60% {transform: translateX(-5px);}
+      40%, 80% {transform: translateX(5px);}
+    }
+
+    .alert-shake {
+      animation: shake 0.5s linear;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .navbar {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+      }
+
+      .logo-title {
+        justify-content: center;
+      }
+
+      .nav-links {
+        width: 100%;
+        justify-content: space-around;
+      }
+
+      .welcome {
+        font-size: 1.5rem;
+      }
+
+      .tiles {
+        grid-template-columns: 1fr;
+      }
+
+      .quick-actions {
+        flex-direction: column;
+      }
+
+      .action-btn {
+        width: 100%;
+      }
+
+      .safety-tips {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .emergency-contacts {
+        grid-template-columns: 1fr;
+      }
+
+      .progress-items {
+        flex-direction: column;
+      }
+
+      .helpline {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .helpline-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+  <header class="navbar">
+    <div class="logo-title">
+      <div class="logo"><i class="fas fa-shield-alt"></i></div>
+      <h1>Zazi</h1>
+    </div>
+    <nav class="nav-links">
+      <a href="home.html" class="nav-btn"><i class="fas fa-home"></i> Home</a>
+      <select id="languageSelect" title="Select Language">
+        <option value="">🌍 Language</option>
+        <option value="en">English</option>
+        <option value="af">Afrikaans</option>
+        <option value="zu">Zulu (isiZulu)</option>
+        <option value="xh">Xhosa (isiXhosa)</option>
+        <option value="st">Sotho (Sesotho)</option>
+        <option value="tn">Tswana (Setswana)</option>
+        <option value="ts">Tsonga (Xitsonga)</option>
+        <option value="ss">Swati (siSwati)</option>
+        <option value="ve">Venda (Tshivenda)</option>
+        <option value="nr">Ndebele (isiNdebele)</option>
+      </select>
+      <button id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </nav>
+  </header>
+
+  <!-- Dashboard Content -->
+  <div class="dashboard-container">
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+      <div class="welcome"><i class="fas fa-heart welcome-icon"></i> Welcome To Zazi</div>
+      <div class="cute-message">You are strong, valued, and never alone. 💜</div>
+      
+      <!-- Quick Action Buttons -->
+      <div class="quick-actions">
+        <button id="emergencyBtn" class="action-btn emergency">
+          <i class="fas fa-exclamation-triangle"></i> Emergency Help
+        </button>
+        <button id="supportBtn" class="action-btn support">
+          <i class="fas fa-hands-helping"></i> Get Support
+        </button>
+        <button id="resourcesBtn" class="action-btn resources">
+          <i class="fas fa-book-open"></i> Resources
+        </button>
+      </div>
+      
+<!-- Study Tips & Motivation -->
+<div class="study-tips" style="margin-top: 30px;">
+  <div class="study-tip" style="margin-bottom: 20px;">
+    <h4><i class="fas fa-clock"></i> Manage Your Time</h4>
+    <p>Set regular study hours each day to improve focus and boost your performance.</p>
+  </div>
+  <div class="study-tip">
+    <h4><i class="fas fa-chart-line"></i> Track Your Progress</h4>
+    <p>Use your analytics dashboard to spot trends and target areas needing improvement.</p>
+  </div>
+</div>
+
+
+<!-- Main Dashboard Tiles -->
+<div class="tiles-section">
+  <h2 class="section-title"><i class="fas fa-th-large"></i> Zazi Core Features</h2>
+  <div class="tiles">
+  
+    <a href="student.html" class="tile">
+      <div class="tile-icon"><i class="fas fa-users-cog"></i></div>
+      <h3>Student Manager Panel</h3>
+      <p>Upload records, predict in bulk, filter by risk, and export reports for easy management.</p>
+    </a>
+    <a href="early-warning.html" class="tile">
+      <div class="tile-icon"><i class="fas fa-exclamation-triangle"></i></div>
+      <h3>Early Warning System</h3>
+      <p>Detect and flag at-risk students using attendance and study hour thresholds.</p>
+    </a>
+    <a href="individuals.html" class="tile">
+      <div class="tile-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+      <h3>Educator Dashboard</h3>
+      <p>Get class-level insights, filter by performance, and track trends over time.</p>
+    </a>
+    <a href="settings.html" class="tile">
+      <div class="tile-icon"><i class="fas fa-cogs"></i></div>
+      <h3>Platform Customization</h3>
+      <p>Toggle dark/light modes, switch languages, and enjoy a fully responsive design.</p>
+    </a>
+  </div>
+</div>
+
+    
+    <!-- Progress Tracker -->
+    <div class="progress-tracker">
+      <h2 class="progress-title"><i class="fas fa-chart-line"></i> Your Progress</h2>
+      <div class="progress-items">
+        <div class="progress-item">
+          <div class="progress-label">
+            <span>Educational Videos</span>
+            <span>60%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 60%; background-color: var(--info);"></div>
+          </div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-label">
+            <span>Support Sessions</span>
+            <span>40%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 40%; background-color: var(--success);"></div>
+          </div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-label">
+            <span>Safety Course</span>
+            <span>75%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 75%; background-color: var(--primary);"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+<!-- Academic Support Box -->
+<div class="support-box">
+  <h3><i class="fas fa-graduation-cap"></i> 24/7 Academic Support & Resources</h3>
+  <p>Get help anytime with study tips, tutoring, and personalized advice to boost your learning.</p>
+  <div class="helpline">
+    <button class="helpline-btn" id="chatTutor"><i class="fas fa-comments"></i> Chat with Tutor</button>
+    <button class="helpline-btn" id="bookSession"><i class="fas fa-calendar-alt"></i> Book a Study Session</button>
+    <button class="helpline-btn" id="accessMaterials"><i class="fas fa-book"></i> Access Study Materials</button>
+  </div>
+</div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-section">
+                <div class="footer-logo">
+                    <i class="fas fa-hand-holding-heart"></i> Zazi
+                </div>
+                <p>Know Yourself Know Your Future</p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Petitions</a></li>
+                    <li><a href="#">Resources</a></li>
+                    <li><a href="#">About Us</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Resources</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Emergency Contacts</a></li>
+                    <li><a href="#">Legal Information</a></li>
+                    <li><a href="#">Support Services</a></li>
+                    <li><a href="#">Educational Materials</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Contact Us</h4>
+                <ul class="contact-info">
+                    <li><i class="fas fa-envelope"></i> info@Zazi.org.za</li>
+                    <li><i class="fas fa-phone"></i> (021) 123 4567</li>
+                    <li><i class="fas fa-map-marker-alt"></i> Cape Town, South Africa</li>
+                </ul>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Subscribe to our newsletter" required>
+                    <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2025 Zazi. All rights reserved.</p>
+            <div class="footer-bottom-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Community Guidelines</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+  <!-- Emergency Help Modal -->
+  <div id="emergencyModal" class="modal">
+    <div class="modal-content emergency-modal">
+      <span class="close">&times;</span>
+      <h2><i class="fas fa-exclamation-triangle"></i> Emergency Help</h2>
+ 
+        <div class="emergency-contact">
+          <h3>Zazi Centre</h3>
+          <p><strong>24/7 Toll-free Number:</strong> 0800 428 428</p>
+          <p><strong>Please Call Me:</strong> *120*7867#</p>
+          <button class="call-btn" data-number="0800428428"><i class="fas fa-phone"></i> Call Now</button>
+        </div>
+ 
+<div class="academic-support-contact">
+  <h3>Academic Help Centers</h3>
+  <p>Access tutoring, counseling, and study skill workshops to boost your academic performance.</p>
+  <p><strong>Find your nearest center:</strong> <a href="#" class="location-link">Use Location Services</a></p>
+</div>
+</div>
+<div class="success-tips">
+  <h3>Study & Success Tips</h3>
+  <ul>
+    <li>Create a quiet, distraction-free study space to maximize focus</li>
+    <li>Set clear goals and track your progress regularly using your dashboard</li>
+    <li>Practice active participation in classes and group discussions</li>
+    <li>Use personalized feedback to target weak areas for improvement</li>
+  </ul>
+</div>
+
+    </div>
+  </div>
+  
+  <!-- Support Modal -->
+  <div id="supportModal" class="modal">
+    <div class="modal-content support-modal">
+      <span class="close">&times;</span>
+      <h2><i class="fas fa-hands-helping"></i> Support Services</h2>
+      <div class="support-categories">
+        <div class="support-category">
+          <h3><i class="fas fa-comments"></i> Counseling Services</h3>
+          <ul>
+            <li>
+              <strong>Lifeline South Africa</strong><br>
+              National counseling service<br>
+              <strong>Tel:</strong> 0861 322 322<br>
+              <strong>Hours:</strong> 24/7
+            </li>
+            <li>
+              <strong>TEARS Foundation</strong><br>
+              SMS "help" to 31531<br>
+              <strong>Tel:</strong> *134*7355#<br>
+              <strong>Hours:</strong> 24/7
+            </li>
+            <li>
+              <strong>South African Depression and Anxiety Group (SADAG)</strong><br>
+              <strong>Tel:</strong> 080 021 2223<br>
+              <strong>Hours:</strong> 8am - 8pm daily
+            </li>
+          </ul>
+        </div>
+        <div class="support-category">
+          <h3><i class="fas fa-home"></i> Shelters & Safe Houses</h3>
+          <ul>
+            <li>
+              <strong>National Shelter Movement of SA</strong><br>
+              Network of shelters across South Africa<br>
+              <strong>Tel:</strong> 0800 001 005<br>
+              <strong>Website:</strong> <a href="#" class="website-link">NSM South Africa</a>
+            </li>
+            <li>
+              <strong>Sisters Incorporated</strong><br>
+              Cape Town shelter services<br>
+              <strong>Tel:</strong> 021 797 4190
+            </li>
+            <li>
+              <strong>Nisaa Institute for Women's Development</strong><br>
+              Gauteng shelter services<br>
+              <strong>Tel:</strong> 011 854 5804/5
+            </li>
+          </ul>
+        </div>
+        <div class="support-category">
+          <h3><i class="fas fa-gavel"></i> Legal Support</h3>
+          <ul>
+            <li>
+              <strong>Legal Aid South Africa</strong><br>
+              Free legal assistance<br>
+              <strong>Tel:</strong> 0800 110 110<br>
+              <strong>Hours:</strong> Mon-Fri, 8am - 4pm
+            </li>
+            <li>
+              <strong>Women's Legal Centre</strong><br>
+              Legal advice for women<br>
+              <strong>Tel:</strong> 021 424 5660<br>
+              <strong>Email:</strong> info@wlce.co.za
+            </li>
+            <li>
+              <strong>Protection Order Information</strong><br>
+              Apply at your nearest Magistrate's Court<br>
+              No cost for protection orders
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="support-note">
+        <p><strong>Note:</strong> All services listed provide confidential support. Your safety and privacy are protected.</p>
+      </div>
+    </div>
+  </div>
+  
+ <!-- Resources Modal -->
+<div id="resourcesModal" class="modal">
+  <div class="modal-content resources-modal">
+    <span class="close">&times;</span>
+    <h2><i class="fas fa-book-open"></i> Academic Resources & Support</h2>
+    <div class="resources-tabs">
+      <button class="tab-btn active" data-tab="info">Information</button>
+      <button class="tab-btn" data-tab="media">Media</button>
+      <button class="tab-btn" data-tab="downloads">Downloads</button>
+    </div>
+    <div class="tab-content">
+      <div id="info" class="tab-pane active">
+        <h3>Understanding Your Academic Journey</h3>
+        <div class="resource-section">
+          <h4>Your Rights & Supports</h4>
+          <ul>
+            <li>You have the right to equal access to learning resources</li>
+            <li>Personalized feedback is available to help improve your performance</li>
+            <li>You can request tutoring or counseling anytime</li>
+            <li>Access to study skills workshops and academic mentoring</li>
+            <li>Confidential support for any learning difficulties</li>
+          </ul>
+        </div>
+        <div class="resource-section">
+          <h4>Academic Policies</h4>
+          <p>Our institution's policies support your right to a fair learning environment. Highlights include:</p>
+          <ul>
+            <li>Academic integrity and honesty requirements</li>
+            <li>Procedures for requesting accommodations</li>
+            <li>Appeal processes for grades and evaluations</li>
+          </ul>
+        </div>
+        <div class="resource-section">
+          <h4>Campus Support Centers</h4>
+          <p>Available services to help you succeed:</p>
+          <ul>
+            <li>Tutoring and Writing Centers</li>
+            <li>Student Counseling Services</li>
+            <li>Library and Research Assistance</li>
+            <li>Technology Support Desk</li>
+          </ul>
+        </div>
+      </div>
+      <div id="media" class="tab-pane">
+        <h3>Educational Media</h3>
+        <div class="video-resources">
+          <div class="video-resource">
+            <div class="video-placeholder">
+              <i class="fas fa-play-circle"></i>
+              <span>Effective Study Techniques</span>
+            </div>
+            <p>Learn proven methods to improve your focus and retention</p>
+          </div>
+          <div class="video-resource">
+            <div class="video-placeholder">
+              <i class="fas fa-play-circle"></i>
+              <span>Time Management for Students</span>
+            </div>
+            <p>Strategies to balance your studies with other commitments</p>
+          </div>
+          <div class="video-resource">
+            <div class="video-placeholder">
+              <i class="fas fa-play-circle"></i>
+              <span>Stress Management & Mindfulness</span>
+            </div>
+            <p>Tips for maintaining your mental well-being during exams</p>
+          </div>
+        </div>
+        <div class="podcast-resources">
+          <h4>Podcasts</h4>
+          <ul>
+            <li>
+              <i class="fas fa-podcast"></i>
+              <strong>Success Stories</strong>
+              <p>Interviews with students who overcame challenges to excel</p>
+            </li>
+            <li>
+              <i class="fas fa-podcast"></i>
+              <strong>Learning Hacks</strong>
+              <p>Tips and tricks to optimize your study routines</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div id="downloads" class="tab-pane">
+        <h3>Downloadable Resources</h3>
+        <div class="download-items">
+          <div class="download-item">
+            <i class="fas fa-file-pdf"></i>
+            <div class="download-info">
+              <h4>Study Planner Template</h4>
+              <p>Organize your study time effectively with this customizable planner</p>
+              <button class="download-btn"><i class="fas fa-download"></i> Download PDF</button>
+            </div>
+          </div>
+          <div class="download-item">
+            <i class="fas fa-file-alt"></i>
+            <div class="download-info">
+              <h4>Exam Preparation Guide</h4>
+              <p>Step-by-step tips to prepare confidently for your exams</p>
+              <button class="download-btn"><i class="fas fa-download"></i> Download PDF</button>
+            </div>
+          </div>
+          <div class="download-item">
+            <i class="fas fa-book"></i>
+            <div class="download-info">
+              <h4>Academic Success Handbook</h4>
+              <p>Comprehensive guide covering study skills, time management, and resources</p>
+              <button class="download-btn"><i class="fas fa-download"></i> Download PDF</button>
+            </div>
+          </div>
+          <div class="download-item">
+            <i class="fas fa-file-medical"></i>
+            <div class="download-info">
+              <h4>Mental Health Resources</h4>
+              <p>Support and advice to maintain wellbeing during your academic journey</p>
+              <button class="download-btn"><i class="fas fa-download"></i> Download PDF</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <script>
+    // Logout functionality
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      if (confirm("Are you sure you want to log out?")) {
+        window.location.href = "logReg.html";
+      }
+    });
+
+    // Language selector
+    document.getElementById("languageSelect").addEventListener("change", (e) => {
+      const selectedOption = e.target.options[e.target.selectedIndex];
+      if (selectedOption.value) {
+        const lang = selectedOption.text;
+        alert(Language switched to: ${lang});
+        // In a real app, this would trigger language change
+      }
+    });
+
+    // Modal functionality
+    const modals = document.querySelectorAll('.modal');
+    const closeBtns = document.querySelectorAll('.close');
+    
+    // Open modals
+    document.getElementById("emergencyBtn").addEventListener("click", (e) => {
+      e.target.classList.add('alert-shake');
+      // Vibrate if supported
+      if (navigator.vibrate) {
+        navigator.vibrate([100, 50, 100]);
+      }
+      document.getElementById("emergencyModal").style.display = "block";
+      setTimeout(() => e.target.classList.remove('alert-shake'), 500);
+    });
+    
+    document.getElementById("supportBtn").addEventListener("click", () => {
+      document.getElementById("supportModal").style.display = "block";
+    });
+    
+    document.getElementById("resourcesBtn").addEventListener("click", () => {
+      document.getElementById("resourcesModal").style.display = "block";
+    });
+    
+    // Close modals
+    closeBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        modals.forEach(modal => {
+          modal.style.display = "none";
+        });
+      });
+    });
+    
+    window.addEventListener('click', (e) => {
+      modals.forEach(modal => {
+        if (e.target === modal) {
+          modal.style.display = "none";
+        }
+      });
+    });
+    
+    // Call buttons functionality
+    document.querySelectorAll('.call-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const number = btn.getAttribute('data-number');
+        if (confirm(Would you like to call ${number}?)) {
+          // In a real app, this would initiate a phone call
+          alert(Calling ${number}...);
+          window.location.href = tel:${number};
+        }
+      });
+    });
+    
+    // Tab functionality for resources modal
+    document.querySelectorAll('.tab-btn').forEach(button => {
+      button.addEventListener('click', () => {
+        // Remove active class from all tabs
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        
+        // Hide all tab content
+        document.querySelectorAll('.tab-pane').forEach(pane => {
+          pane.classList.remove('active');
+        });
+        
+        // Add active class to clicked tab
+        button.classList.add('active');
+        
+        // Show corresponding tab content
+        const tabId = button.getAttribute('data-tab');
+        document.getElementById(tabId).classList.add('active');
+      });
+    });
+    
+    // 24/7 Support Line buttons
+    document.getElementById("callGBV").addEventListener("click", () => {
+      if (confirm("Would you like to call the GBV Command Centre at 0800 428 428?")) {
+        window.location.href = "tel:0800428428";
+      }
+    });
+    
+    document.getElementById("pleaseCallMe").addEventListener("click", () => {
+      alert("To use the 'Please Call Me' service, dial *120*7867# from your mobile phone. The Command Centre will call you back.");
+    });
+    
+    document.getElementById("textHelp").addEventListener("click", () => {
+      if (confirm("Would you like to send an SMS to 31531? Just type 'help' in the message.")) {
+        window.location.href = "sms:31531?body=help";
+      }
+    });
+    
+    // Download buttons
+    document.querySelectorAll('.download-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        alert("Your download is starting...");
+        // In a real app, this would initiate an actual download
+      });
+    });
+    
+    // Location services for finding nearest Thuthuzela Care Centre
+    document.querySelector('.location-link').addEventListener('click', (e) => {
+      e.preventDefault();
+      if (confirm("Would you like to find the nearest Thuthuzela Care Centre to your current location?")) {
+        // In a real app, this would use geolocation services
+        alert("Locating the nearest center to you...");
+      }
+    });
+    
+    // Quick exit button - pressing 'Escape' key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        window.location.href = 'https://weather.com';
+      }
+    });
+    
+    // Progress bar animation
+    document.addEventListener('DOMContentLoaded', () => {
+      const progressBars = document.querySelectorAll('.progress-fill');
+      progressBars.forEach(bar => {
+        const width = bar.style.width;
+        bar.style.width = '0';
+        setTimeout(() => {
+          bar.style.width = width;
+        }, 300);
+      });
+    });
+  </script>
+
+</body>
+
+</html>

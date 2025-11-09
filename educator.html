@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Zazi Educator Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #1e1e2f;
+      color: #eee;
+      margin: 20px;
+    }
+
+    /* Upload styles */
+    #uploadSection {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+
+    #uploadSection h1 {
+      color: #61dafb;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    #uploadForm {
+      background: #2c2c47;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.7);
+      max-width: 420px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #uploadForm input[type="file"] {
+      margin-bottom: 20px;
+      color: #eee;
+      cursor: pointer;
+    }
+
+    #uploadForm button {
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #61dafb, #1a9ed8);
+      border: none;
+      border-radius: 12px;
+      color: #1e1e2f;
+      font-weight: 700;
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 6px 10px rgba(97, 218, 251, 0.6);
+      transition: background 0.4s ease;
+      width: 100%;
+    }
+
+    #uploadForm button:hover {
+      background: linear-gradient(135deg, #53c7ff, #1582cc);
+      box-shadow: 0 8px 16px rgba(53, 199, 255, 0.8);
+    }
+
+    #message {
+      margin-top: 20px;
+      font-size: 1.1rem;
+      min-height: 24px;
+      text-align: center;
+      white-space: pre-line;
+    }
+
+    /* Dashboard styles */
+    #dashboard h1 {
+      color: #61dafb;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    select {
+      padding: 8px;
+      border-radius: 8px;
+      background: #3a3a61;
+      color: #fff;
+      border: none;
+    }
+
+    select:disabled {
+      background: #555777;
+      color: #aaa;
+      cursor: not-allowed;
+    }
+
+    .charts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      padding: 0 10px;
+    }
+
+    canvas {
+      background: #2c2c47;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.8);
+    }
+
+    @media (max-width: 768px) {
+      .charts {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .no-data-message {
+      color: #888;
+      text-align: center;
+      grid-column: 1 / -1;
+      font-size: 1.2rem;
+      padding: 40px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Upload Section -->
+  <section id="uploadSection">
+    <h1>Upload Student Data (.csv or .xlsx)</h1>
+    <form id="uploadForm">
+      <input type="file" name="file" id="fileInput" accept=".csv, .xlsx, .xls" required />
+      <button type="submit">Upload File</button>
+    </form>
+    <div id="message"></div>
+  </section>
+
+  <!-- Dashboard Section -->
+  <section id="dashboard">
+    <h1>Educator Dashboard</h1>
+    <div class="filters">
+      <select id="riskFilter" disabled>
+        <option value="">All Risk Levels</option>
+        <option value="at-risk">At Risk (&lt; 50)</option>
+        <option value="not-at-risk">Not At Risk (≥ 50)</option>
+      </select>
+      <select id="departmentFilter" disabled></select>
+      <select id="gradeFilter" disabled></select>
+    </div>
+    <div class="charts" id="chartsContainer"></div>
+  </section>
+
+  <script>
+    // Upload script
+    const form = document.getElementById('uploadForm');
+    const fileInput = document.getElementById('fileInput');
+    const message = document.getElementById('message');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!fileInput.files.length) {
+        message.style.color = "#f44336";
+        message.textContent = "Please select a file to upload.";
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+      message.textContent = "Uploading...";
+      message.style.color = "#eee";
+
+      try {
+        const response = await fetch('http://localhost:8000/upload-data/', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const text = await response.text();
+        let result;
+        try {
+          result = JSON.parse(text);
+        } catch {
+          message.style.color = "#f44336";
+          message.textContent = "Unexpected server response format.";
+          return;
+        }
+
+        if (response.ok) {
+          const rowInfo = result.rows !== undefined && result.columns !== undefined
+            ? `\nRows: ${result.rows} | Columns: ${result.columns}`
+            : '';
+          message.style.color = "#61dafb";
+          message.textContent = (result.message || "File uploaded successfully!") + rowInfo;
+          initDashboard();  // Trigger dashboard update
+        } else {
+          message.style.color = "#f44336";
+          message.textContent = result.detail || "Upload failed. Check your file format.";
+        }
+      } catch (error) {
+        message.style.color = "#f44336";
+        message.textContent = "Error: " + error.message;
+      }
+    });
+
+    // Dashboard script
+    const departmentFilter = document.getElementById('departmentFilter');
+    const gradeFilter = document.getElementById('gradeFilter');
+    const riskFilter = document.getElementById('riskFilter');
+    const chartsContainer = document.getElementById('chartsContainer');
+    let originalData = [];
+    let charts = {};
+
+    async function fetchFullData() {
+      try {
+        const res = await fetch('http://localhost:8000/dashboard/charts-data');
+        if (!res.ok) throw new Error("Failed to fetch data");
+        return await res.json();
+      } catch {
+        return [];
+      }
+    }
+
+    function applyFilters(data) {
+      return data.filter(row => {
+        const risk = parseFloat(row.Final_Score) < 50 ? 'at-risk' : 'not-at-risk';
+        return (!riskFilter.value || risk === riskFilter.value) &&
+               (!departmentFilter.value || row.Department === departmentFilter.value) &&
+               (!gradeFilter.value || row.Grade === gradeFilter.value);
+      });
+    }
+
+    function enableFilters(enabled) {
+      departmentFilter.disabled = !enabled;
+      gradeFilter.disabled = !enabled;
+      riskFilter.disabled = !enabled;
+    }
+
+    function renderDropdowns(data) {
+      const departments = [...new Set(data.map(d => d.Department))].sort();
+      const grades = [...new Set(data.map(d => d.Grade))].sort();
+      departmentFilter.innerHTML = '<option value="">All Departments</option>' + departments.map(dep => `<option value="${dep}">${dep}</option>`).join('');
+      gradeFilter.innerHTML = '<option value="">All Grades</option>' + grades.map(gr => `<option value="${gr}">${gr}</option>`).join('');
+    }
+
+    function destroyCharts() {
+      for (const key in charts) {
+        if (charts[key]) charts[key].destroy();
+      }
+      charts = {};
+    }
+
+    function clearChartsArea() {
+      destroyCharts();
+      chartsContainer.innerHTML = `<p class="no-data-message">No data available to display charts.</p>`;
+    }
+
+    function createCanvas(id) {
+      const canvas = document.createElement('canvas');
+      canvas.id = id;
+      chartsContainer.appendChild(canvas);
+      return canvas.getContext('2d');
+    }
+
+    function renderCharts(filtered) {
+      destroyCharts();
+      chartsContainer.innerHTML = '';
+      const ctxAvg = createCanvas('avgScoreChart');
+      const ctxGrade = createCanvas('gradeDistributionChart');
+      const ctxRisk = createCanvas('riskLevelBarChart');
+      const ctxScatter = createCanvas('studyVsFinalChart');
+
+      const avgPerDept = {}, gradeCounts = {}, riskLevels = { 'At Risk': 0, 'Not At Risk': 0 };
+      const studyHours = [], finalScores = [];
+
+      filtered.forEach(s => {
+        const score = parseFloat(s.Final_Score);
+        const dept = s.Department, grade = s.Grade;
+        const study = parseFloat(s.Study_Hours_per_Week);
+
+        if (!avgPerDept[dept]) avgPerDept[dept] = [];
+        avgPerDept[dept].push(score);
+        gradeCounts[grade] = (gradeCounts[grade] || 0) + 1;
+        riskLevels[score < 50 ? 'At Risk' : 'Not At Risk']++;
+        studyHours.push(study); finalScores.push(score);
+      });
+
+      const avgLabels = Object.keys(avgPerDept).sort();
+      const avgData = avgLabels.map(d => avgPerDept[d].reduce((a,b) => a+b, 0) / avgPerDept[d].length);
+      const gradeLabels = Object.keys(gradeCounts).sort();
+      const gradeData = gradeLabels.map(g => gradeCounts[g]);
+      const riskLabels = Object.keys(riskLevels);
+      const riskData = riskLabels.map(r => riskLevels[r]);
+
+      charts.avgScoreChart = new Chart(ctxAvg, {
+        type: 'bar',
+        data: { labels: avgLabels, datasets: [{ label: 'Avg Final Score by Department', backgroundColor: '#61dafb', data: avgData }] },
+        options: { responsive: true }
+      });
+
+      charts.gradeDistributionChart = new Chart(ctxGrade, {
+        type: 'pie',
+        data: { labels: gradeLabels, datasets: [{ data: gradeData, backgroundColor: ['#61dafb', '#36a2eb', '#4bc0c0', '#ff9f40', '#ff6384'] }] },
+        options: { responsive: true }
+      });
+
+      charts.riskLevelBarChart = new Chart(ctxRisk, {
+        type: 'bar',
+        data: { labels: riskLabels, datasets: [{ label: 'Number of Students by Risk Level', backgroundColor: ['#ff6384', '#4bc0c0'], data: riskData }] },
+        options: { responsive: true }
+      });
+
+      charts.studyVsFinalChart = new Chart(ctxScatter, {
+        type: 'scatter',
+        data: { datasets: [{ label: 'Study Hours vs Final Score', backgroundColor: '#36a2eb', data: studyHours.map((s, i) => ({ x: s, y: finalScores[i] })) }] },
+        options: {
+          responsive: true,
+          scales: {
+            x: { title: { display: true, text: 'Study Hours/Week' } },
+            y: { title: { display: true, text: 'Final Score' } }
+          }
+        }
+      });
+    }
+
+    async function initDashboard() {
+      const data = await fetchFullData();
+      originalData = data;
+      if (!data || data.length === 0) {
+        enableFilters(false);
+        clearChartsArea();
+        return;
+      }
+      enableFilters(true);
+      renderDropdowns(data);
+      updateDashboard();
+    }
+
+    function updateDashboard() {
+      if (!originalData || originalData.length === 0) {
+        clearChartsArea();
+        return;
+      }
+      const filtered = applyFilters(originalData);
+      if (filtered.length === 0) {
+        clearChartsArea();
+        return;
+      }
+      renderCharts(filtered);
+    }
+
+    departmentFilter.addEventListener('change', updateDashboard);
+    gradeFilter.addEventListener('change', updateDashboard);
+    riskFilter.addEventListener('change', updateDashboard);
+  </script>
+
+</body>
+</html>

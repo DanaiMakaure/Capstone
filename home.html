@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zazi - Home</title>
+    <style>
+        :root {
+            --purple: #8A4FFF;
+            --purple-light: #A67FFF;
+            --pink: #FF7BAC;
+            --bg: #F8F9FE;
+            --text: #2D3748;
+            --white: #FFFFFF;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+        
+        .navbar {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logo {
+            font-size: 2rem;
+        }
+        
+        .navbar h1 {
+            color: var(--purple);
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .nav-btn {
+            color: var(--text);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .nav-btn:hover {
+            color: var(--purple);
+        }
+        
+        #languageSelect {
+            background-color: transparent;
+            border: 2px solid var(--purple-light);
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            color: var(--text);
+            outline: none;
+        }
+        
+        #logoutBtn {
+            background-color: transparent;
+            border: 2px solid var(--pink);
+            border-radius: 20px;
+            padding: 0.5rem 1.2rem;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text);
+            transition: all 0.3s ease;
+        }
+        
+        #logoutBtn:hover {
+            background-color: var(--pink);
+            color: white;
+        }
+        
+        /* Card Carousel */
+        .carousel-container {
+            position: relative;
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+            overflow: hidden;
+        }
+        
+        .carousel {
+            display: flex;
+            position: relative;
+            height: 500px;
+            width: 100%;
+        }
+        
+        .card {
+            position: absolute;
+            width: 33.33%;
+            padding: 0 15px;
+            transition: all 0.5s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .card-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            height: 450px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .card-left {
+            left: 0;
+            transform: scale(0.85) translateX(10%);
+            z-index: 1;
+            opacity: 0.8;
+            pointer-events: none;
+        }
+        
+        .card-center {
+            left: 50%;
+            transform: translateX(-50%) scale(1);
+            z-index: 2;
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .card-right {
+            right: 0;
+            transform: scale(0.85) translateX(-10%);
+            z-index: 1;
+            opacity: 0.8;
+            pointer-events: none;
+        }
+        
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--purple);
+        }
+        
+        .card p {
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .card-image {
+            width: 100%;
+            height: 200px;
+            background-color: #f0f0f0;
+            border-radius: 15px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .carousel-nav {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+            gap: 1rem;
+        }
+        
+        .carousel-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--purple);
+            color: white;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(138, 79, 255, 0.3);
+        }
+        
+        .carousel-btn:hover {
+            background: var(--purple-light);
+            transform: scale(1.1);
+        }
+        
+        .gbv-info {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+        
+        .gbv-info h2 {
+            font-size: 2rem;
+            color: var(--purple);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .gbv-info p {
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            text-align: center;
+        }
+        
+        .gbv-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .gbv-types li {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            list-style: none;
+        }
+
+        /* Word of the Day Bubble */
+        .word-bubble {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--pink), var(--purple));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(138, 79, 255, 0.4);
+            z-index: 1000;
+            animation: float 3s ease-in-out infinite;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+            font-size: 0.9rem;
+            line-height: 1.2;
+            padding: 10px;
+        }
+        
+        .word-bubble:hover {
+            transform: scale(1.05) translateY(-5px);
+            box-shadow: 0 10px 25px rgba(138, 79, 255, 0.5);
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-15px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+        
+        .word-reveal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            max-width: 90%;
+            width: 400px;
+            text-align: center;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .word-reveal.active {
+            transform: translate(-50%, -50%) scale(1);
+        }
+        
+        .word-reveal h3 {
+            color: var(--purple);
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+        
+        .word-reveal .word {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--pink);
+            margin-bottom: 1rem;
+        }
+        
+        .word-reveal .definition {
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .word-reveal .example {
+            font-style: italic;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+        
+        .close-btn {
+            background: var(--purple);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            background: var(--purple-light);
+            transform: translateY(-3px);
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .pop-animation {
+            animation: pop 0.5s forwards;
+        }
+        
+        @keyframes pop {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.4);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(0);
+                opacity: 0;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .card {
+                width: 100%;
+            }
+            
+            .card-left {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            
+            .card-center {
+                transform: translateX(0);
+                left: 0;
+            }
+            
+            .card-right {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            
+            .navbar {
+                flex-direction: column;
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+                margin-top: 1rem;
+            }
+            
+            .word-bubble {
+                width: 80px;
+                height: 80px;
+                font-size: 0.8rem;
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+
+
+        /* Footer Styling */
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 3rem 0 1rem;
+            margin-top: 3rem;
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .social-link {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        
+        .social-link:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+        
+        .footer-section h4 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .footer-links, .contact-info {
+            list-style: none;
+        }
+        
+        .footer-links li, .contact-info li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-links a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .contact-info i {
+            margin-right: 0.5rem;
+            color: #8a2be2;
+        }
+        
+        .newsletter-form {
+            display: flex;
+            margin-top: 1rem;
+        }
+        
+        .newsletter-form input {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 5px 0 0 5px;
+        }
+        
+        .newsletter-form button {
+            padding: 0.75rem 1rem;
+            background-color: #6a0dad;
+            color: white;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .newsletter-form button:hover {
+            background-color: #8a2be2;
+        }
+        
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .footer-bottom-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .footer-bottom-links a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-bottom-links a:hover {
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="navbar">
+        <div class="logo-title">
+            <div class="logo">✋</div>
+            <h1>Zazi</h1>
+        </div>
+        <nav class="nav-links">
+            
+            
+
+            <li><a href="login.html">Log in</a></li>
+            <select id="languageSelect" title="Select Language">
+                <option value="">🌍 Language</option>
+                <option value="en">English</option>
+                <option value="af">Afrikaans</option>
+                <option value="zu">Zulu (isiZulu)</option>
+                <option value="xh">Xhosa (isiXhosa)</option>
+            </select>
+            <button id="logoutBtn">Logout</button>
+            
+        </nav>
+    </header>
+
+    <!-- Card Carousel -->
+    <div class="carousel-container">
+        <div class="carousel">
+            <!-- Card 1  -->
+            <div class="card">
+                <div class="card-content">
+                    <div class="card-image">
+                        <img src="stressed.png" alt="Behind Every Grade Is a Story You Can't See">
+                    </div>
+                    <h3>Behind Every Grade Is a Story You Can't See</h3>
+                    <p>A significant number of students fail or drop out — not due to lack of intelligence, but because early signs of disengagement, low motivation, or study struggles go unnoticed.📊 “1 in 3 students underperform due to behavioral and engagement challenges.” – UNESCO, 2023</p>
+                </div>
+            </div>
+            
+            <!-- Card 2  -->
+            <div class="card">
+                <div class="card-content">
+                    <div class="card-image">
+                        <img src="stress.png" alt="Data is Personal">
+                    </div>
+                    <h3>Data is Personal</h3>
+                    <p>Every student has a different path one may be battling anxiety, another trying their best without results. Traditional systems often overlook the nuances. We aim to change that by focusing on what matters most: real behavior, real effort, real humans</p>
+                </div>
+            </div>
+            
+            <!-- Card 3 -  -->
+            <div class="card">
+                <div class="card-content">
+                    <div class="card-image">
+                        <img src="model.png" alt="See the Struggle Before It Becomes a Failure">
+                    </div>
+                    <h3>See the Struggle Before It Becomes a Failure</h3>
+                    <p>Using behavioral data such as study habits, attendance, and assessment performance, our AI model predicts which students may be at risk — giving educators the tools to intervene early and personalize support.</p>
+                </div>
+            </div>
+
+            <!-- Card 4 -  -->
+            <div class="card">
+                <div class="card-content">
+                    <div class="card-image">
+                        <img src="analytics.png" alt="Not Just Data. Direction.">
+                    </div>
+                    <h3>Not Just Data. Direction.</h3>
+                    <p>Our platform transforms raw academic and behavioral data into meaningful insights — helping educators understand why a student is struggling and how to help. Visual dashboards reveal trends, highlight risk factors, and guide interventions.</p>
+                </div>
+            </div>
+
+            <!-- Card 5 - -->
+            <div class="card">
+                <div class="card-content">
+                    <div class="card-image">
+                        <img src="final.png" alt="Empowered Students. Informed Educators.">
+                    </div>
+                    <h3>Empowered Students. Informed Educators.</h3>
+                    <p>By turning data into empathy-driven decisions, we’re giving each student a better chance to succeed. Our work supports SDG 4 — Quality Education — by enabling equitable, personalized academic support for all.</p>
+                </div>
+            </div>
+
+
+            <!-- Card 6 -->
+            <div class="card">
+                <div class="card-content">
+                    <div class="card-image">
+                        <img src="national.png" alt="National  Statistics">
+                    </div>
+                    <h3>National Statistics</h3>
+                    <p>Attendance is the strongest predictor of academic performance.Missing more than 10% of classes increases dropout risk by 75% (Johns Hopkins, 2021).A study in Educational Data Mining found that early behavior patterns (study hours, login frequency, participation) could predict failure with over 85% accuracy (Aljohani et al., 2021).Low participation in class discussions, group work, or platforms is associated with lower grades and higher failure rates (NSSE, 2020).</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="carousel-nav">
+            <button class="carousel-btn" id="prevBtn">←</button>
+            <button class="carousel-btn" id="nextBtn">→</button>
+        </div>
+    </div>
+
+   <!-- Student Performance Risk Information Section -->
+<section class="student-risk-info">
+    <h2>Why Students Struggle?</h2>
+    
+    <p>Academic failure and dropout aren’t always caused by a lack of intelligence. Often, students silently struggle with behavioral challenges, low engagement, and a lack of timely support. Our project, <strong>Learning Under the Lens</strong>, aims to identify these hidden risk factors early through data-driven insights.</p>
+
+        
+        <ul class="gbv-types">
+                 <li><strong>Low Engagement:</strong> Minimal participation in class activities, group work, or platforms — often the first sign of disengagement.</li>
+                 <li><strong>Poor Attendance:</strong> Skipping lectures or online sessions, leading to missed learning opportunities and gaps in understanding.</li>
+                 <li><strong>Inconsistent Study Habits:</strong> Irregular or insufficient study hours that weaken long-term retention and exam readiness.</li>
+                 <li><strong>Stress and Burnout:</strong> Mental fatigue or personal challenges that affect motivation, focus, and overall performance.</li>
+                 <li><strong>Lack of Feedback:</strong> Students unaware of their learning gaps or progress are less likely to improve without guidance.</li>
+                 <li><strong>Delayed Intervention:</strong> Teachers and institutions failing to detect risks early enough to act meaningfully.</li>
+        </ul>
+    </section>
+
+    <!-- Word of the Day Bubble -->
+    <div class="word-bubble" id="wordBubble">
+        Word of the Day
+        <br>
+        (Click to pop!)
+    </div>
+
+    <!-- Word Reveal Modal -->
+    <div class="word-reveal" id="wordReveal">
+        <h3>Word of the Day</h3>
+        <div class="word" id="wordOfDay">Ukuthula</div>
+        <div class="definition" id="wordDefinition">Peace, tranquility, or calmness. The state of being free from disturbance.</div>
+        <div class="example" id="wordExample">"After the conflict resolution, ukuthula was restored to the community."</div>
+        <button class="close-btn" id="closeWordBtn">Got it</button>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <script>
+        // Card Carousel Functionality
+        const cards = document.querySelectorAll('.card');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        let currentIndex = 0;
+        const totalCards = cards.length;
+        
+        // Function to update card positions
+        function updateCarousel() {
+            // Hide all cards first
+            cards.forEach(card => {
+                card.classList.remove('card-left', 'card-center', 'card-right');
+                card.style.opacity = '0';
+                card.style.pointerEvents = 'none';
+            });
+            
+            // Calculate previous, current, and next card indices
+            const prevIndex = (currentIndex - 1 + totalCards) % totalCards;
+            const nextIndex = (currentIndex + 1) % totalCards;
+            
+            // Apply classes to make visible
+            cards[prevIndex].classList.add('card-left');
+            cards[currentIndex].classList.add('card-center');
+            cards[nextIndex].classList.add('card-right');
+            
+            // Make all three cards visible
+            cards[prevIndex].style.opacity = '0.8';
+            cards[currentIndex].style.opacity = '1';
+            cards[nextIndex].style.opacity = '0.8';
+            
+            // Enable pointer events only on center card
+            cards[currentIndex].style.pointerEvents = 'auto';
+        }
+        
+        // Function to go to next card
+        function nextCard() {
+            currentIndex = (currentIndex + 1) % totalCards;
+            updateCarousel();
+        }
+        
+        // Function to go to previous card
+        function prevCard() {
+            currentIndex = (currentIndex - 1 + totalCards) % totalCards;
+            updateCarousel();
+        }
+        
+        // Add event listeners to buttons
+        nextBtn.addEventListener('click', nextCard);
+        prevBtn.addEventListener('click', prevCard);
+        
+        // Initialize carousel on page load
+        updateCarousel();
+        
+        // Logout functionality
+        document.getElementById("logoutBtn").addEventListener("click", () => {
+            alert("Logging out...");
+            window.location.href = "logReg.html";
+        });
+
+        // Language selection
+        document.getElementById("languageSelect").addEventListener("change", (e) => {
+            const lang = e.target.options[e.target.selectedIndex].text;
+            alert(`Language switched to: ${lang}`);
+        });
+
+        // Word of the Day Functionality
+        const wordBubble = document.getElementById('wordBubble');
+        const wordReveal = document.getElementById('wordReveal');
+        const overlay = document.getElementById('overlay');
+        const closeWordBtn = document.getElementById('closeWordBtn');
+        const wordOfDay = document.getElementById('wordOfDay');
+        const wordDefinition = document.getElementById('wordDefinition');
+        const wordExample = document.getElementById('wordExample');
+
+        // List of words related to GBV awareness and empowerment in various South African languages
+        const wordsList = [
+    {
+        word: "Funda",
+        definition: "To learn or study. A continuous process of acquiring knowledge.",
+        example: "Students who dedicate time to funda consistently perform better academically.",
+        language: "Zulu"
+    },
+    {
+        word: "Khuthaza",
+        definition: "Encourage or motivate. Offering support that inspires progress.",
+        example: "The platform khuthaza learners to stay engaged and take control of their learning paths.",
+        language: "Zulu"
+    },
+    {
+        word: "Ukwazi",
+        definition: "To know or understand. Signifies insight and clarity.",
+        example: "With better data, educators gain ukwazi into student challenges.",
+        language: "Xhosa"
+    },
+    {
+        word: "Sizo",
+        definition: "Help or support. Offering timely assistance when someone is in need.",
+        example: "Early predictions allow educators to offer sizo before a student fails.",
+        language: "Zulu"
+    },
+    {
+        word: "Thuthukisa",
+        definition: "To improve or develop. Reflects progress in academics or personal growth.",
+        example: "Using insights from our model, students can thuthukisa their performance.",
+        language: "Zulu"
+    },
+    {
+        word: "Zimisela",
+        definition: "Determination or perseverance. The drive to keep going despite challenges.",
+        example: "Academic success often depends on zimisela and consistency.",
+        language: "Xhosa"
+    },
+    {
+        word: "Imfundo",
+        definition: "Education or learning. The foundation of empowerment and opportunity.",
+        example: "Imfundo is a tool for transformation when supported with the right systems.",
+        language: "Zulu"
+    }
+];
+
+
+        // Select a random word from the list
+        function getRandomWord() {
+            const randomIndex = Math.floor(Math.random() * wordsList.length);
+            return wordsList[randomIndex];
+        }
+
+        // Set today's word
+        let todaysWord = getRandomWord();
+
+        // Update word content
+        function updateWordContent() {
+            wordOfDay.textContent = todaysWord.word;
+            wordDefinition.textContent = todaysWord.definition;
+            wordExample.textContent = `"${todaysWord.example}" (${todaysWord.language})`;
+        }
+
+        // Initial word content update
+        updateWordContent();
+
+        // Pop animation and reveal word
+        wordBubble.addEventListener('click', () => {
+            wordBubble.classList.add('pop-animation');
+            
+            setTimeout(() => {
+                wordBubble.style.display = 'none';
+                overlay.classList.add('active');
+                wordReveal.classList.add('active');
+            }, 500);
+        });
+
+        // Close word reveal and reset bubble for next time
+        closeWordBtn.addEventListener('click', () => {
+            overlay.classList.remove('active');
+            wordReveal.classList.remove('active');
+            
+            // Get a new word for next time
+            todaysWord = getRandomWord();
+            updateWordContent();
+            
+            // Reset the bubble (would typically happen on next day or page refresh)
+            setTimeout(() => {
+                wordBubble.classList.remove('pop-animation');
+                wordBubble.style.display = 'flex';
+            }, 500);
+        });
+
+        // Close on overlay click too
+        overlay.addEventListener('click', () => {
+            closeWordBtn.click();
+        });
+    </script>
+
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-section">
+                <div class="footer-logo">
+                    <i class="fas fa-hand-holding-heart"></i> Zazi
+                </div>
+                <p>Every insight counts in shaping a smarter, more supportive education system.</p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Petitions</a></li>
+                    <li><a href="#">Resources</a></li>
+                    <li><a href="#">About Us</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Resources</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Emergency Contacts</a></li>
+                    <li><a href="#">Shelter Directory</a></li>
+                    <li><a href="#">Legal Information</a></li>
+                    <li><a href="#">Support Services</a></li>
+                    <li><a href="#">Educational Materials</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Contact Us</h4>
+                <ul class="contact-info">
+                    <li><i class="fas fa-envelope"></i> info@Zazi.org.za</li>
+                    <li><i class="fas fa-phone"></i> (021) 123 4567</li>
+                    <li><i class="fas fa-map-marker-alt"></i> Cape Town, South Africa</li>
+                </ul>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Subscribe to our newsletter" required>
+                    <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2025 Zazi. All rights reserved.</p>
+            <div class="footer-bottom-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Community Guidelines</a>
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

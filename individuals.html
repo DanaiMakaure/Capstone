@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Student Insights Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      background: #1e1e2f;
+      color: #eee;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+    }
+    h1 {
+      color: #61dafb;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    form {
+      background: #2c2c47;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    input[type="file"] {
+      margin-bottom: 10px;
+      color: #eee;
+      cursor: pointer;
+    }
+    button {
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #61dafb, #1a9ed8);
+      border: none;
+      border-radius: 12px;
+      color: #1e1e2f;
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      box-shadow: 0 6px 10px rgba(97, 218, 251, 0.6);
+      transition: background 0.4s ease;
+    }
+    button:hover {
+      background: linear-gradient(135deg, #53c7ff, #1582cc);
+      box-shadow: 0 8px 16px rgba(53, 199, 255, 0.8);
+    }
+    #message {
+      margin-top: 15px;
+      font-size: 1.1rem;
+      min-height: 24px;
+      text-align: center;
+      white-space: pre-line;
+    }
+    .chart-container {
+      margin-bottom: 40px;
+      background: #2c2c47;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.8);
+    }
+    canvas {
+      max-width: 100%;
+      height: 300px;
+    }
+    .progress-bar-wrapper {
+      background: #555777;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-top: 10px;
+      height: 20px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: #61dafb;
+      width: 0%;
+      transition: width 1s ease;
+    }
+    .improvement-item {
+      margin: 10px 0;
+      font-size: 1rem;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+      color: #eee;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Student Insights Dashboard</h1>
+
+  <form id="uploadForm">
+    <input type="file" id="fileInput" accept=".csv, .xlsx, .xls" required />
+    <br />
+    <button type="submit">Upload Student Data</button>
+    <div id="message"></div>
+  </form>
+
+  <div id="insightsSection" style="display:none;">
+    <h2>Line Chart: Final Score vs Class Average</h2>
+    <div class="chart-container">
+      <canvas id="lineChart"></canvas>
+    </div>
+
+    <h2>Radar Chart: Your Skills vs Top Performers</h2>
+    <div class="chart-container">
+      <canvas id="radarChart"></canvas>
+    </div>
+
+    <h2>Improvement Areas</h2>
+    <div id="improvementAreas"></div>
+  </div>
+
+<script>
+  const uploadForm = document.getElementById('uploadForm');
+  const fileInput = document.getElementById('fileInput');
+  const message = document.getElementById('message');
+  const insightsSection = document.getElementById('insightsSection');
+  const improvementAreasDiv = document.getElementById('improvementAreas');
+
+  let lineChart, radarChart;
+
+  uploadForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    if (!fileInput.files.length) {
+      message.style.color = "#f44336";
+      message.textContent = "Please select a file to upload.";
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+
+    message.style.color = "#eee";
+    message.textContent = "Uploading and processing...";
+
+    try {
+      const response = await fetch('http://localhost:8000/student/insights', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.detail || 'Upload failed.');
+      }
+
+      const data = await response.json();
+      message.style.color = "#61dafb";
+      message.textContent = "File uploaded successfully! Showing insights...";
+      insightsSection.style.display = "block";
+
+      // Use first student from insights as example
+      const student = data.insights[0];
+      const studentId = student.Student_ID;
+
+      // Fetch individual student insights for charts
+      const studentInsightsRes = await fetch(`http://localhost:8000/student-insights/${studentId}`);
+      if (!studentInsightsRes.ok) throw new Error("Failed to get student insights.");
+      const studentInsights = await studentInsightsRes.json();
+
+      renderLineChart(studentInsights);
+      renderRadarChart(studentInsights);
+      renderImprovementAreas(studentInsights);
+
+    } catch (err) {
+      message.style.color = "#f44336";
+      message.textContent = err.message;
+      insightsSection.style.display = "none";
+      console.error(err);
+    }
+  });
+
+  function renderLineChart(data) {
+    // For simplicity, simulate sequential entries since we only have one final score
+    // If you have time-series data, replace accordingly
+
+    const labels = ['You', 'Class Average'];
+    const finalScore = data.student_scores.Final_Score;
+    const classAvg = data.class_averages.Final_Score;
+
+    if (lineChart) lineChart.destroy();
+
+    const ctx = document.getElementById('lineChart').getContext('2d');
+    lineChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Final Score',
+          data: [finalScore, classAvg],
+          backgroundColor: ['#61dafb', '#4bc0c0']
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: { beginAtZero: true, max: 100 }
+        }
+      }
+    });
+  }
+
+  function renderRadarChart(data) {
+    const labels = Object.keys(data.student_scores).filter(k => k !== "Final_Score");
+    const studentData = labels.map(l => data.student_scores[l]);
+    const topData = labels.map(l => data.top_performer_averages[l]);
+
+    if (radarChart) radarChart.destroy();
+
+    const ctx = document.getElementById('radarChart').getContext('2d');
+    radarChart = new Chart(ctx, {
+      type: 'radar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'You',
+            data: studentData,
+            fill: true,
+            backgroundColor: 'rgba(97, 218, 251, 0.4)',
+            borderColor: '#61dafb',
+            pointBackgroundColor: '#61dafb',
+          },
+          {
+            label: 'Top Performers',
+            data: topData,
+            fill: true,
+            backgroundColor: 'rgba(75, 192, 192, 0.4)',
+            borderColor: '#4bc0c0',
+            pointBackgroundColor: '#4bc0c0',
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          r: {
+            beginAtZero: true,
+            max: 100
+          }
+        }
+      }
+    });
+  }
+
+  function renderImprovementAreas(data) {
+    improvementAreasDiv.innerHTML = '';
+    const areas = data.improvement_percentages;
+
+    for (const [skill, percent] of Object.entries(areas)) {
+      const div = document.createElement('div');
+      div.classList.add('improvement-item');
+
+      div.innerHTML = `
+        <strong>${skill}</strong>: ${percent}% of top performer
+        <div class="progress-bar-wrapper">
+          <div class="progress-bar-fill" style="width: ${percent}%;"></div>
+        </div>
+      `;
+      improvementAreasDiv.appendChild(div);
+    }
+  }
+</script>
+
+</body>
+</html>
