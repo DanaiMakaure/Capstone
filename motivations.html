@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cultural Motivation Cards</title>
+
+<style>
+  body {
+    background-color: #1e1e2f;
+    color: #eee;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+  }
+  #motivationCards {
+    max-width: 700px;
+    background: #2c2c47;
+    padding: 30px 35px;
+    border-radius: 14px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.8);
+    text-align: center;
+    user-select: none;
+  }
+  #motivationCards h1 {
+    color: #61dafb;
+    margin-bottom: 30px;
+    font-weight: 700;
+  }
+  #cardContent {
+    font-style: italic;
+    font-size: 1.4em;
+    line-height: 1.5em;
+    min-height: 150px;
+    color: #eee;
+    transition: opacity 0.5s ease;
+  }
+  #cardOrigin {
+    margin-top: 22px;
+    font-weight: 600;
+    color: #4bc0c0;
+    font-size: 1.1em;
+  }
+  #nextCardBtn {
+    margin-top: 30px;
+    background: #61dafb;
+    border: none;
+    color: #1e1e2f;
+    padding: 12px 28px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 1.1em;
+    transition: background 0.3s ease;
+    box-shadow: 0 4px 12px rgba(97, 218, 251, 0.6);
+  }
+  #nextCardBtn:hover {
+    background: #53c7ff;
+  }
+  @media (max-width: 480px) {
+    #motivationCards {
+      padding: 25px 20px;
+    }
+    #cardContent {
+      font-size: 1.1em;
+      min-height: 120px;
+    }
+    #nextCardBtn {
+      width: 100%;
+      padding: 14px 0;
+      font-size: 1.1em;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div id="motivationCards" role="region" aria-label="Cultural Motivation Cards">
+  <h1>Daily Inspiration</h1>
+  <div id="cardContent" aria-live="polite" aria-atomic="true"></div>
+  <div id="cardOrigin"></div>
+  <button id="nextCardBtn" aria-label="Show next motivation card">Next Inspiration →</button>
+</div>
+
+<script>
+  const cards = [
+    {
+      content: "If you want to go fast, go alone. If you want to go far, go together.",
+      origin: "African Proverb"
+    },
+    {
+      content: "Fall seven times, stand up eight.",
+      origin: "Japanese Proverb"
+    },
+    {
+      content: "A journey of a thousand miles begins with a single step.",
+      origin: "Chinese Proverb"
+    },
+    {
+      content: "Wisdom does not come overnight.",
+      origin: "Somali Proverb"
+    },
+    {
+      content: "The best time to plant a tree was 20 years ago. The second best time is now.",
+      origin: "Chinese Proverb"
+    },
+    {
+      content: "Even the longest day has its end.",
+      origin: "African Proverb"
+    },
+    {
+      content: "When the roots of a tree begin to decay, it spreads death to the branches.",
+      origin: "Nigerian Proverb"
+    },
+    {
+      content: "You learn how to cut down trees by cutting them down.",
+      origin: "Bantu Proverb"
+    },
+    {
+      content: "Smooth seas do not make skillful sailors.",
+      origin: "African Proverb"
+    },
+    {
+      content: "Knowledge is like a garden: if it is not cultivated, it cannot be harvested.",
+      origin: "Guinean Proverb"
+    },
+    {
+      content: "No matter how long the night, the day is sure to come.",
+      origin: "African Proverb"
+    },
+    {
+      content: "Wisdom is like fire; people take it from others.",
+      origin: "Haitian Proverb"
+    },
+    {
+      content: "A child who is not embraced by the village will burn it down to feel its warmth.",
+      origin: "African Proverb"
+    },
+    {
+      content: "Do not look where you fell, but where you slipped.",
+      origin: "African Proverb"
+    }
+  ];
+
+  let currentIndex = 0;
+  const cardContentEl = document.getElementById('cardContent');
+  const cardOriginEl = document.getElementById('cardOrigin');
+  const nextBtn = document.getElementById('nextCardBtn');
+  let autoRotateInterval;
+
+  function showCard(index) {
+    // fade out
+    cardContentEl.style.opacity = 0;
+    cardOriginEl.style.opacity = 0;
+
+    setTimeout(() => {
+      const card = cards[index];
+      cardContentEl.textContent = `"${card.content}"`;
+      cardOriginEl.textContent = `— ${card.origin}`;
+      // fade in
+      cardContentEl.style.opacity = 1;
+      cardOriginEl.style.opacity = 1;
+    }, 400);
+  }
+
+  function nextCard() {
+    currentIndex = (currentIndex + 1) % cards.length;
+    showCard(currentIndex);
+  }
+
+  nextBtn.addEventListener('click', () => {
+    nextCard();
+    resetAutoRotate();
+  });
+
+  function resetAutoRotate() {
+    clearInterval(autoRotateInterval);
+    autoRotateInterval = setInterval(nextCard, 15000);
+  }
+
+  // Initialize
+  showCard(currentIndex);
+  autoRotateInterval = setInterval(nextCard, 15000);
+</script>
+
+</body>
+</html>

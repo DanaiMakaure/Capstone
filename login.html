@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Zazi Login</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #001f3f; /* Dark blue background */
+      margin: 0;
+    }
+
+    .modal {
+      display: flex;
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: #ffffff;
+      padding: 2rem;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 450px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      text-align: center;
+    }
+
+    .switch {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1.2rem;
+    }
+
+    .switch button {
+      flex: 1;
+      padding: 10px;
+      background: #0078d7;
+      border: none;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .switch button.active {
+      background: #0056b3;
+    }
+
+    .flip-container {
+      perspective: 1000px;
+      height: 320px;
+      position: relative;
+    }
+
+    .form {
+      position: absolute;
+      width: 100%;
+      backface-visibility: hidden;
+      transition: transform 0.6s ease;
+    }
+
+    .front {
+      transform: rotateY(0deg);
+      z-index: 2;
+    }
+
+    .back {
+      transform: rotateY(180deg);
+    }
+
+    #flipCard.flip .front {
+      transform: rotateY(180deg);
+    }
+
+    #flipCard.flip .back {
+      transform: rotateY(360deg);
+    }
+
+    form label {
+      display: block;
+      text-align: left;
+      font-weight: bold;
+      margin: 10px 0 5px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+    }
+
+    button[type="submit"] {
+      background: #0078d7;
+      color: white;
+      font-weight: bold;
+      border: none;
+      padding: 12px;
+      width: 100%;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button[type="submit"]:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Login Modal -->
+<div id="loginModal" class="modal">
+  <div class="modal-content">
+    <h2>Login</h2>
+    <div class="switch">
+      <button id="studentBtn" class="active" type="button">Student</button>
+      <button id="adminBtn" type="button">Admin</button>
+    </div>
+
+    <div class="flip-container" id="flipCard">
+      <!-- Student Login -->
+      <form id="studentForm" class="form front" onsubmit="return handleStudentLogin(event)">
+        <label>Email</label>
+        <input type="email" id="studentEmail" placeholder="202300316@spu.ac.za" required />
+        <label>Password</label>
+        <input type="password" id="studentPassword" placeholder="spu@0316" required />
+        <button type="submit">Login as Student</button>
+      </form>
+
+      <!-- Admin Login -->
+      <form id="adminForm" class="form back" onsubmit="return handleAdminLogin(event)">
+        <label>Email</label>
+        <input type="email" id="adminEmail" placeholder="admin@spu.ac.za" required />
+        <label>Password</label>
+        <input type="password" id="adminPassword" placeholder="spu@1234" required />
+        <button type="submit">Login as Admin</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  const loginModal = document.getElementById("loginModal");
+  const studentBtn = document.getElementById("studentBtn");
+  const adminBtn = document.getElementById("adminBtn");
+  const flipCard = document.getElementById("flipCard");
+
+  studentBtn.addEventListener("click", () => {
+    flipCard.classList.remove("flip");
+    studentBtn.classList.add("active");
+    adminBtn.classList.remove("active");
+  });
+
+  adminBtn.addEventListener("click", () => {
+    flipCard.classList.add("flip");
+    adminBtn.classList.add("active");
+    studentBtn.classList.remove("active");
+  });
+
+  function handleStudentLogin(event) {
+    event.preventDefault();
+    const email = document.getElementById("studentEmail").value.trim();
+    const password = document.getElementById("studentPassword").value.trim();
+
+    const match = email.match(/^(\d{9})@spu\.ac\.za$/);
+    if (!match) {
+      alert("Invalid student email format. Example: 202300316@spu.ac.za");
+      return false;
+    }
+
+    const last4 = match[1].slice(-4);
+    const expectedPassword = `spu@${last4}`;
+    if (password !== expectedPassword) {
+      alert("Incorrect password.");
+      return false;
+    }
+
+    window.location.href = "dashboard.html";
+    return true;
+  }
+
+  function handleAdminLogin(event) {
+    event.preventDefault();
+    const email = document.getElementById("adminEmail").value.trim();
+    const password = document.getElementById("adminPassword").value.trim();
+
+    if (email !== "admin@spu.ac.za") {
+      alert("Invalid admin email.");
+      return false;
+    }
+
+    if (!/^spu@\d{4}$/.test(password)) {
+      alert("Admin password must be in format spu@1234");
+      return false;
+    }
+
+    window.location.href = "dashboard2.html";
+    return true;
+  }
+
+  window.addEventListener("click", (event) => {
+    if (event.target === loginModal) {
+      loginModal.style.display = "none";
+    }
+  });
+</script>
+</body>
+</html>
+
+
+

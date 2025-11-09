@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Settings - Zazi</title>
+<style>
+  /* Base styles */
+  body {
+    transition: background-color 0.3s, color 0.3s, font-size 0.3s, font-family 0.3s;
+    padding: 2rem;
+    margin: 0;
+  }
+
+  /* Color Themes */
+  body.theme-light {
+    background-color: white;
+    color: black;
+  }
+  body.theme-dark {
+    background-color: #1e1e2f;
+    color: #eee;
+  }
+  body.theme-blue {
+    background-color: #e0f0ff;
+    color: #003366;
+  }
+  body.theme-green {
+    background-color: #e8f5e9;
+    color: #1b5e20;
+  }
+  body.theme-purple {
+    background-color: #f3e5f5;
+    color: #4a148c;
+  }
+
+  /* Font Sizes */
+  body.font-small {
+    font-size: 14px;
+  }
+  body.font-medium {
+    font-size: 18px;
+  }
+  body.font-large {
+    font-size: 22px;
+  }
+
+  /* Font Families */
+  body.font-segoe {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  body.font-arial {
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  body.font-courier {
+    font-family: 'Courier New', Courier, monospace;
+  }
+  body.font-georgia {
+    font-family: Georgia, serif;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 1rem;
+    font-weight: bold;
+  }
+
+  select {
+    margin-left: 0.5rem;
+  }
+</style>
+</head>
+<body>
+
+<h1>Settings</h1>
+
+<label>
+  Color Theme
+  <select id="themeSelect">
+    <option value="theme-light">Light</option>
+    <option value="theme-dark">Dark</option>
+    <option value="theme-blue">Blue</option>
+    <option value="theme-green">Green</option>
+    <option value="theme-purple">Purple</option>
+  </select>
+</label>
+
+<label>
+  Font Size
+  <select id="fontSizeSelect">
+    <option value="font-small">Small</option>
+    <option value="font-medium">Medium</option>
+    <option value="font-large">Large</option>
+  </select>
+</label>
+
+<label>
+  Font Type
+  <select id="fontTypeSelect">
+    <option value="font-segoe">Segoe UI</option>
+    <option value="font-arial">Arial</option>
+    <option value="font-courier">Courier New</option>
+    <option value="font-georgia">Georgia</option>
+  </select>
+</label>
+
+<script>
+  // Load saved settings or defaults
+  function loadSettings() {
+    const theme = localStorage.getItem('theme') || 'theme-light';
+    const fontSize = localStorage.getItem('fontSize') || 'font-medium';
+    const fontType = localStorage.getItem('fontType') || 'font-segoe';
+
+    // Remove all possible classes first
+    document.body.classList.remove(
+      'theme-light', 'theme-dark', 'theme-blue', 'theme-green', 'theme-purple',
+      'font-small', 'font-medium', 'font-large',
+      'font-segoe', 'font-arial', 'font-courier', 'font-georgia'
+    );
+
+    document.body.classList.add(theme, fontSize, fontType);
+
+    document.getElementById('themeSelect').value = theme;
+    document.getElementById('fontSizeSelect').value = fontSize;
+    document.getElementById('fontTypeSelect').value = fontType;
+  }
+
+  function applySetting(key, value) {
+    // Remove old class for this setting type
+    if (key === 'theme') {
+      document.body.classList.remove('theme-light', 'theme-dark', 'theme-blue', 'theme-green', 'theme-purple');
+      document.body.classList.add(value);
+    } else if (key === 'fontSize') {
+      document.body.classList.remove('font-small', 'font-medium', 'font-large');
+      document.body.classList.add(value);
+    } else if (key === 'fontType') {
+      document.body.classList.remove('font-segoe', 'font-arial', 'font-courier', 'font-georgia');
+      document.body.classList.add(value);
+    }
+
+    localStorage.setItem(key, value);
+  }
+
+  document.getElementById('themeSelect').addEventListener('change', (e) => {
+    applySetting('theme', e.target.value);
+  });
+
+  document.getElementById('fontSizeSelect').addEventListener('change', (e) => {
+    applySetting('fontSize', e.target.value);
+  });
+
+  document.getElementById('fontTypeSelect').addEventListener('change', (e) => {
+    applySetting('fontType', e.target.value);
+  });
+
+  loadSettings();
+</script>
+
+</body>
+</html>
